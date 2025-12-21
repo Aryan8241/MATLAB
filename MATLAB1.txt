@@ -1,0 +1,69 @@
+clc;
+clear;
+close all;
+
+% Time axis
+t = -10:0.01:10;
+n = -10:10;
+
+%% 1. Unit Impulse Signal
+impulse = (n == 0);
+
+figure;
+stem(n, impulse, 'filled');
+title('Unit Impulse Signal');
+xlabel('n');
+ylabel('\delta[n]');
+grid on;
+
+%% 2. Unit Step Signal
+step = (n >= 0);
+
+figure;
+stem(n, step, 'filled');
+title('Unit Step Signal');
+xlabel('n');
+ylabel('u[n]');
+grid on;
+
+%% 3. Ramp Signal
+ramp = n .* (n >= 0);
+
+figure;
+stem(n, ramp, 'filled');
+title('Ramp Signal');
+xlabel('n');
+ylabel('r[n]');
+grid on;
+
+%% 4. Exponential Signal
+a = 0.5;   % exponential base
+exp_signal = exp(a * t);
+
+figure;
+plot(t, exp_signal, 'LineWidth', 1.5);
+title('Exponential Signal');
+xlabel('t');
+ylabel('e^{at}');
+grid on;
+
+%% 5. Sinusoidal Signal
+f = 1;     % frequency in Hz
+sin_signal = sin(2*pi*f*t);
+
+figure;
+plot(t, sin_signal, 'LineWidth', 1.5);
+title('Sinusoidal Signal');
+xlabel('t');
+ylabel('sin(2\pift)');
+grid on;
+
+%% 6. Cosine Signal
+cos_signal = cos(2*pi*f*t);
+
+figure;
+plot(t, cos_signal, 'LineWidth', 1.5);
+title('Cosine Signal');
+xlabel('t');
+ylabel('cos(2\pift)');
+grid on;
