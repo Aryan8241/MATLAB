@@ -1,0 +1,40 @@
+clc;
+clear;
+close all;
+
+%% Window Length
+N = 51;            % Number of samples
+n = 0:N-1;         % Sample index
+
+%% Hamming Window
+hamming_win = hamming(N);
+
+%% Blackman Window
+blackman_win = blackman(N);
+
+%% Plot Hamming Window
+figure;
+stem(n, hamming_win, 'filled');
+grid on;
+title('Hamming Window');
+xlabel('n');
+ylabel('Amplitude');
+
+%% Plot Blackman Window
+figure;
+stem(n, blackman_win, 'filled');
+grid on;
+title('Blackman Window');
+xlabel('n');
+ylabel('Amplitude');
+
+%% Compare Both Windows
+figure;
+plot(n, hamming_win, 'LineWidth', 1.5);
+hold on;
+plot(n, blackman_win, 'LineWidth', 1.5);
+grid on;
+legend('Hamming Window', 'Blackman Window');
+title('Comparison of Hamming and Blackman Windows');
+xlabel('n');
+ylabel('Amplitude');
