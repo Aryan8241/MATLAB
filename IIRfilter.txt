@@ -1,0 +1,42 @@
+clc;
+clear;
+close all;
+
+%% Specifications
+fc = 4000;              % Cutoff frequency = 4 kHz
+wc = 2*pi*fc;           % Cutoff angular frequency (rad/s)
+order = 4;              % Filter order
+
+%% Design Analog Butterworth Low-Pass Filter
+% 's' indicates analog (Laplace-domain) filter
+[b, a] = butter(order, wc, 's');
+
+%% Display Transfer Function
+H = tf(b, a);
+disp('Analog Butterworth Low-Pass Filter Transfer Function:');
+H
+
+%% Frequency Response
+w = logspace(2, 6, 1000);    % Frequency range (rad/s)
+[mag, phase] = bode(H, w);
+
+mag = squeeze(mag);
+phase = squeeze(phase);
+
+%% Plot Magnitude Response
+figure;
+semilogx(w/(2*pi), 20*log10(mag), 'LineWidth', 1.5);
+grid on;
+xlabel('Frequency (Hz)');
+ylabel('Magnitude (dB)');
+title('Magnitude Response of Analog Butterworth LPF');
+xline(fc, '--r', 'Cutoff Frequency');
+
+%% Plot Phase Response
+figure;
+semilogx(w/(2*pi), phase, 'LineWidth', 1.5);
+grid on;
+xlabel('Frequency (Hz)');
+ylabel('Phase (degrees)');
+title('Phase Response of Analog Butterworth LPF');
+xline(fc, '--r', 'Cutoff Frequency');
