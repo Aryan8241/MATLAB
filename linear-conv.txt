@@ -1,0 +1,50 @@
+clc;
+clear;
+close all;
+
+%% Input Sequences
+x = [1 2 3 4];      % First sequence
+h = [1 1 1];        % Second sequence
+
+Nx = length(x);
+Nh = length(h);
+
+%% Linear Convolution using Built-in Function
+y_linear = conv(x, h);
+
+disp('Linear convolution using conv():');
+disp(y_linear);
+
+%% Linear Convolution using FFT
+N = Nx + Nh - 1;    % Length required to avoid circular convolution
+
+X = fft(x, N);
+H = fft(h, N);
+
+Y_fft = X .* H;     % Frequency-domain multiplication
+y_fft = ifft(Y_fft);
+
+disp('Linear convolution using FFT:');
+disp(real(y_fft));
+
+%% Verification
+error = y_linear - real(y_fft);
+disp('Error (should be near zero):');
+disp(error);
+
+%% Plot Results
+n1 = 0:length(y_linear)-1;
+
+figure;
+stem(n1, y_linear, 'filled');
+title('Linear Convolution using conv()');
+xlabel('n');
+ylabel('Amplitude');
+grid on;
+
+figure;
+stem(n1, real(y_fft), 'filled');
+title('Linear Convolution using FFT');
+xlabel('n');
+ylabel('Amplitude');
+grid on;
