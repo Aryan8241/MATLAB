@@ -1,0 +1,42 @@
+% Verification of FFT as an Interpolator
+clc;
+clear;
+close all;
+
+% Original discrete-time signal
+n = 0:7;
+x = sin(2*pi*0.125*n);   % Low-frequency sinusoid
+
+% Length of original signal
+N = length(x);
+
+% FFT of original signal
+X = fft(x);
+
+% Interpolation factor
+L = 4;                  % Interpolation by factor of 4
+N_new = L * N;
+
+% Zero-padding in frequency domain
+X_shifted = fftshift(X);
+Z = zeros(1, (N_new - N)/2);
+X_padded = [Z X_shifted Z];
+X_padded = ifftshift(X_padded);
+
+% IFFT to obtain interpolated signal
+x_interp = ifft(X_padded) * L;
+
+% Time indices
+n_interp = 0:1/L:(N-1);
+
+% Plot results
+figure;
+stem(n, x, 'filled');
+hold on;
+plot(n_interp, real(x_interp), 'r', 'LineWidth', 1.5);
+grid on;
+
+legend('Original Samples','Interpolated Signal');
+xlabel('n');
+ylabel('Amplitude');
+title('Verification of FFT as an Interpolator');
