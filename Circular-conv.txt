@@ -1,0 +1,28 @@
+% Circular Convolution using FFT
+clc;
+clear;
+
+% Input sequences
+x = [1 2 3 4];      % First sequence
+h = [1 1 1 1];      % Second sequence
+
+% Length of circular convolution
+N = max(length(x), length(h));
+
+% Zero-pad sequences to length N
+x = [x zeros(1, N - length(x))];
+h = [h zeros(1, N - length(h))];
+
+% Compute FFTs
+X = fft(x, N);
+H = fft(h, N);
+
+% Multiply in frequency domain
+Y = X .* H;
+
+% Inverse FFT to get circular convolution
+y = ifft(Y);
+
+% Display result
+disp('Circular Convolution Result:');
+disp(real(y));   % real() removes small imaginary numerical errors
