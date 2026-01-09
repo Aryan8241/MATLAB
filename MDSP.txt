@@ -1,0 +1,100 @@
+clc;
+clear;
+close all;
+
+%% Parameters
+Fs = 1000;              % Original sampling frequency (Hz)
+t = 0:1/Fs:0.1;         % Time duration
+f = 100;                % Signal frequency (Hz)
+
+x = sin(2*pi*f*t);      % Original signal
+
+L = 2;                  % Upsampling factor
+M = 2;                  % Downsampling factor
+
+%% UPSAMPLING
+x_up = upsample(x, L);
+Fs_up = Fs * L;
+
+%% DOWNSAMPLING
+x_down = downsample(x, M);
+Fs_down = Fs / M;
+
+%% INTERPOLATION (Upsampling + LPF)
+x_interp = interp(x, L);
+Fs_interp = Fs * L;
+
+%% DECIMATION (LPF + Downsampling)
+x_dec = decimate(x, M);
+Fs_dec = Fs / M;
+
+%% FFT Analysis Function
+fft_plot = @(sig, Fs, title_txt) ...
+    plot(linspace(-Fs/2, Fs/2, length(sig)), ...
+         abs(fftshift(fft(sig))));
+
+%% Time Domain Plots
+figure('Name','Time Domain Signals');
+
+subplot(5,1,1)
+plot(t, x)
+title('Original Signal')
+xlabel('Time (s)')
+grid on
+
+subplot(5,1,2)
+stem((0:length(x_up)-1)/Fs_up, x_up, 'filled')
+title('Upsampled Signal')
+xlabel('Time (s)')
+grid on
+
+subplot(5,1,3)
+stem((0:length(x_down)-1)/Fs_down, x_down, 'filled')
+title('Downsampled Signal')
+xlabel('Time (s)')
+grid on
+
+subplot(5,1,4)
+plot((0:length(x_interp)-1)/Fs_interp, x_interp)
+title('Interpolated Signal')
+xlabel('Time (s)')
+grid on
+
+subplot(5,1,5)
+plot((0:length(x_dec)-1)/Fs_dec, x_dec)
+title('Decimated Signal')
+xlabel('Time (s)')
+grid on
+
+%% Frequency Domain Plots
+figure('Name','Frequency Domain (Spectral Effects)');
+
+subplot(5,1,1)
+fft_plot(x, Fs, 'Original Spectrum')
+title('Original Spectrum')
+xlabel('Frequency (Hz)')
+grid on
+
+subplot(5,1,2)
+fft_plot(x_up, Fs_up, 'Upsampled Spectrum')
+title('Upsampled Spectrum (Images Appear)')
+xlabel('Frequency (Hz)')
+grid on
+
+subplot(5,1,3)
+fft_plot(x_down, Fs_down, 'Downsampled Spectrum')
+title('Downsampled Spectrum (Aliasing)')
+xlabel('Frequency (Hz)')
+grid on
+
+subplot(5,1,4)
+fft_plot(x_interp, Fs_interp, 'Interpolated Spectrum')
+title('Interpolated Spectrum (Images Removed)')
+xlabel('Frequency (Hz)')
+grid on
+
+subplot(5,1,5)
+fft_plot(x_dec, Fs_dec, 'Decimated Spectrum')
+title('Decimated Spectrum (Anti-Aliased)')
+xlabel('Frequency (Hz)')
+grid on
