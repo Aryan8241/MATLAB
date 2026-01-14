@@ -1,0 +1,88 @@
+clc;
+clear;
+close all;
+
+%% Define Input Signals
+n = -10:10;
+x1 = sin(0.2*pi*n);
+x2 = cos(0.3*pi*n);
+
+a = 2;
+b = 3;
+
+%% Define System (LTI System)
+sys = @(x) 2*x + [0 x(1:end-1)];
+
+%% ---------------- LINEARITY TEST ----------------
+y1 = sys(x1);
+y2 = sys(x2);
+
+y_lhs = sys(a*x1 + b*x2);          % System response to combined input
+y_rhs = a*y1 + b*y2;               % Combined system responses
+
+figure;
+subplot(2,1,1)
+stem(n, y_lhs, 'filled')
+title('Linearity Test: LHS')
+grid on
+
+subplot(2,1,2)
+stem(n, y_rhs, 'filled')
+title('Linearity Test: RHS')
+grid on
+
+disp('Linearity Test:')
+if isequal(round(y_lhs,5), round(y_rhs,5))
+    disp('System is LINEAR')
+else
+    disp('System is NON-LINEAR')
+end
+
+%% ---------------- TIME INVARIANCE TEST ----------------
+k = 2;                             % Time shift
+x_shift = [zeros(1,k) x1(1:end-k)];
+y_shift_input = sys(x_shift);      % Output for shifted input
+
+y_original = sys(x1);
+y_shift_output = [zeros(1,k) y_original(1:end-k)];
+
+figure;
+subplot(2,1,1)
+stem(n, y_shift_input, 'filled')
+title('Output of Shifted Input')
+grid on
+
+subplot(2,1,2)
+stem(n, y_shift_output, 'filled')
+title('Shifted Output of Original Input')
+grid on
+
+disp('Time Invariance Test:')
+if isequal(round(y_shift_input,5), round(y_shift_output,5))
+    disp('System is TIME INVARIANT')
+else
+    disp('System is TIME VARIANT')
+end
+
+%% ---------------- STABILITY TEST ----------------
+imp = (n == 0);                   % Unit impulse
+h = sys(imp);                     % Impulse response
+
+figure;
+stem(n, h, 'filled')
+title('Impulse Response h(n)')
+grid on
+
+if sum(abs(h)) < Inf
+    disp('System is STABLE')
+else
+    disp('System is UNSTABLE')
+end
+
+%% ---------------- CAUSALITY TEST ----------------
+disp('Causality Test:')
+if all(h(n < 0) == 0)
+    disp('System is CAUSAL')
+else
+    disp('System is NON-CAUSAL')
+end
