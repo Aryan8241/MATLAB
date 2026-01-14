@@ -1,0 +1,106 @@
+clc;
+clear;
+close all;
+
+%% Input Sequences
+x = [1 2 3 4];
+h = [1 1 1 1];
+
+nx = 0:length(x)-1;
+nh = 0:length(h)-1;
+
+%% ------------------------------------------------
+%% 1. LINEAR CONVOLUTION (Built-in Function)
+y_conv = conv(x, h);
+
+%% ------------------------------------------------
+%% 2. LINEAR CONVOLUTION (Without Built-in)
+Nx = length(x);
+Nh = length(h);
+Ny = Nx + Nh - 1;
+y_manual = zeros(1, Ny);
+
+for n = 1:Ny
+    for k = 1:Nx
+        if (n-k+1 > 0) && (n-k+1 <= Nh)
+            y_manual(n) = y_manual(n) + x(k)*h(n-k+1);
+        end
+    end
+end
+
+%% ------------------------------------------------
+%% 3. CIRCULAR CONVOLUTION
+N = max(Nx, Nh);
+x_c = [x zeros(1, N-Nx)];
+h_c = [h zeros(1, N-Nh)];
+
+y_circ = zeros(1, N);
+for n = 1:N
+    for k = 1:N
+        index = mod(n-k, N) + 1;
+        y_circ(n) = y_circ(n) + x_c(k)*h_c(index);
+    end
+end
+
+%% ------------------------------------------------
+%% 4. CONVOLUTION THEOREM USING FFT
+Y_fft = ifft(fft(x, Ny) .* fft(h, Ny));
+
+%% ------------------------------------------------
+%% 5. AUTO-CORRELATION AND CROSS-CORRELATION
+auto_corr = xcorr(x, x);
+cross_corr = xcorr(x, h);
+
+%% ------------------------------------------------
+%% DISPLAY RESULTS
+disp('Linear Convolution using conv():');
+disp(y_conv);
+
+disp('Linear Convolution without built-in:');
+disp(y_manual);
+
+disp('Circular Convolution:');
+disp(y_circ);
+
+disp('Linear Convolution using FFT:');
+disp(real(Y_fft));
+
+disp('Auto-correlation of x:');
+disp(auto_corr);
+
+disp('Cross-correlation of x and h:');
+disp(cross_corr);
+
+%% ------------------------------------------------
+%% PLOTS
+figure;
+
+subplot(3,2,1)
+stem(y_conv,'filled')
+title('Linear Convolution (conv)')
+grid on
+
+subplot(3,2,2)
+stem(y_manual,'filled')
+title('Linear Convolution (Manual)')
+grid on
+
+subplot(3,2,3)
+stem(y_circ,'filled')
+title('Circular Convolution')
+grid on
+
+subplot(3,2,4)
+stem(real(Y_fft),'filled')
+title('Convolution via FFT')
+grid on
+
+subplot(3,2,5)
+stem(auto_corr,'filled')
+title('Auto-Correlation')
+grid on
+
+subplot(3,2,6)
+stem(cross_corr,'filled')
+title('Cross-Correlation')
+grid on
