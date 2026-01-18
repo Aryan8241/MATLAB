@@ -1,0 +1,19 @@
+clc;
+clear all;
+close all;
+
+% Define system
+num = [1];
+den = [1 2];
+sys = tf(num, den);
+
+% Time and input
+t = 0:0.01:10;
+x = exp(-t);
+
+% System response
+y = lsim(sys, x, t);
+
+plot(t, y)
+title('LTI System Response using lsim')
+xlabel('t'); ylabel('y(t)')
